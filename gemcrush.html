@@ -1,6 +1,6 @@
-
-
 <html>
+  <!-- Good v3-->
+
   <head>
     <script>
       document.addEventListener("DOMContentLoaded", () => {
@@ -252,24 +252,21 @@
         }
 
         function clearPattern(indices) {
-  indices.forEach((index) => {
-    const square = squares[index];
-    
-    // Create animation clone
-    const clone = document.createElement('div');
-    clone.className = 'gem-pop';
-    clone.style.backgroundImage = square.style.backgroundImage;
-    clone.style.left = square.offsetLeft + 'px';
-    clone.style.top = square.offsetTop + 'px';
-    ccGrid.appendChild(clone);
-    
-    // Remove clone after animation
-    setTimeout(() => clone.remove(), 300);
-    
-    // Clear original immediately
-    square.style.backgroundImage = "";
-  });
-}
+          indices.forEach((index) => {
+            const square = squares[index];
+
+            const clone = document.createElement("div");
+            clone.className = "gem-pop";
+            clone.style.backgroundImage = square.style.backgroundImage;
+            clone.style.left = square.offsetLeft + "px";
+            clone.style.top = square.offsetTop + "px";
+            ccGrid.appendChild(clone);
+
+            setTimeout(() => clone.remove(), 300);
+
+            square.style.backgroundImage = "";
+          });
+        }
 
         function checkRowForFive() {
           for (let i = 0; i < width * width; i++) {
@@ -332,7 +329,7 @@
             ) {
               ccScore += 5;
               ccScoreDisplay.innerHTML = ccScore;
-            clearPattern(rowOfFour);
+              clearPattern(rowOfFour);
             }
           }
         }
@@ -373,7 +370,6 @@
               ccScore += 3;
               ccScoreDisplay.innerHTML = ccScore;
               clearPattern(rowOfThree);
-              
             }
           }
         }
@@ -493,6 +489,44 @@
             colorBeingReplaced;
         }
 
+        function clearPattern(indices) {
+          indices.forEach((index) => {
+            const square = squares[index];
+            const color = square.style.backgroundImage;
+
+            const clone = document.createElement("div");
+            clone.className = "gem-pop";
+            clone.style.backgroundImage = color;
+            clone.style.left = square.offsetLeft + "px";
+            clone.style.top = square.offsetTop + "px";
+            ccGrid.appendChild(clone);
+
+            for (let i = 0; i < 6; i++) {
+              const particle = document.createElement("div");
+              particle.className = "particle";
+              particle.style.backgroundImage = color;
+
+              const angle = i * 60 * (Math.PI / 180); 
+              const distance = 6 + Math.random() * 4;
+
+              particle.style.left = square.offsetLeft + 3.75 + "px"; 
+              particle.style.top = square.offsetTop + 3.75 + "px";
+
+              const tx = Math.cos(angle) * distance + "vh";
+              const ty = Math.sin(angle) * distance + "vh";
+
+              particle.style.setProperty("--tx", tx);
+              particle.style.setProperty("--ty", ty);
+
+              ccGrid.appendChild(particle);
+              setTimeout(() => particle.remove(), 600);
+            }
+
+            square.style.backgroundImage = "";
+            setTimeout(() => clone.remove(), 300);
+          });
+        }
+
         endlessButton.addEventListener("click", () => startGame("endless"));
         timedButton.addEventListener("click", () => startGame("timed"));
         ccChangeModeButton.addEventListener("click", ccChangeMode);
@@ -531,32 +565,62 @@
         background-position: center;
         border-radius: 5px;
         transition: transform 0.2s ease, opacity 0.3s;
-        
       }
 
       .ccGrid div:hover {
         transform: scale(1.1);
       }
 
-
       .ccGrid div.pop {
         animation: pop 0.3s ease-out forwards;
-    }
+      }
 
+      .gem-pop {
+        position: absolute;
+        animation: pop 0.5s ease-out forwards;
+        pointer-events: none;
+        height: 8vh;
+        width: 8vh;
+        z-index: 10;
+      }
 
-    .gem-pop {
-    position: absolute;
-    animation: pop 0.3s ease-out forwards;
-    pointer-events: none;
-    height: 8vh;
-    width: 8vh;
-  }
+      .particle {
+        position: absolute;
+        width: 0.5vh; 
+        height: 0.5vh;
+        border-radius: 50%;
+        background-size: cover;
+        animation: particle 0.5s ease-out forwards;
+        z-index: 5;
+        opacity: 0.75; 
+      }
 
-@keyframes pop {
-    0% { transform: scale(1); opacity: 1; }
-    30% { transform: scale(1.3); opacity: 0.5; }
-    100% { transform: scale(1.8); opacity: 0; }
-}
+      @keyframes pop {
+        0% {
+          transform: scale(1);
+          opacity: 0.75;
+        }
+        50% {
+          transform: scale(2);
+          opacity: 0;
+        }
+        100% {
+          transform: scale(3);
+          opacity: 0;
+        }
+      }
+
+      @keyframes particle {
+        0% {
+          transform: translate(0, 0) scale(1);
+          opacity: 0.5; 
+        }
+        100% {
+          transform: translate(var(--tx), var(--ty)) scale(0.3);
+          opacity: 0;
+          
+        }
+      }
 
       .ccScoreBoard {
         display: flex;
@@ -592,7 +656,8 @@
       }
 
       #modeSelection button {
-        transition: background 0.3s, border 0.3s, border-radius 0.3s, box-shadow 0.3s, color 0.3s;
+        transition: background 0.3s, border 0.3s, border-radius 0.3s,
+          box-shadow 0.3s, color 0.3s;
         margin: 10px;
         padding: 10px 20px;
         font-size: 16px;
@@ -605,7 +670,8 @@
       }
 
       #modeSelection button:hover {
-        transition: background 0.3s, border 0.3s, border-radius 0.3s, box-shadow 0.3s, color 0.3s;
+        transition: background 0.3s, border 0.3s, border-radius 0.3s,
+          box-shadow 0.3s, color 0.3s;
         margin: 10px;
         padding: 10px 20px;
         font-size: 16px;
@@ -623,7 +689,8 @@
       }
 
       #ccChangeMode {
-        transition: background 0.3s, border 0.3s, border-radius 0.3s, box-shadow 0.3s, color 0.3s;
+        transition: background 0.3s, border 0.3s, border-radius 0.3s,
+          box-shadow 0.3s, color 0.3s;
         margin-top: 10px;
         padding: 5px 10px;
         background-color: #00000080;
@@ -634,9 +701,9 @@
         cursor: pointer;
       }
 
-
       #ccChangeMode:hover {
-        transition: background 0.3s, border 0.3s, border-radius 0.3s, box-shadow 0.3s, color 0.3s;
+        transition: background 0.3s, border 0.3s, border-radius 0.3s,
+          box-shadow 0.3s, color 0.3s;
         margin-top: 10px;
         padding: 5px 10px;
         background-color: #b296ff;
@@ -672,8 +739,5 @@
 
     <!-- original: https://github.com/kubowania/candy-crush  -->
     <!-- current: https://github.com/MorrowShore/GemCrush  -->
-  
+
 </html>
-
-
-
